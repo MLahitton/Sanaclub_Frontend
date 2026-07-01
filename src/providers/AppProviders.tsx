@@ -26,7 +26,7 @@ function AuthBootstrapGate() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--color-sanaclub-bg)]">
         <div className="rounded-2xl border border-[var(--color-sanaclub-border)] bg-white px-6 py-3 text-center text-sm text-[var(--color-sanaclub-text)] shadow-[0_12px_35px_rgba(36,51,43,0.08)]">
-          Inicializando sesiÃ³n...
+          Inicializando sesión...
         </div>
       </div>
     );

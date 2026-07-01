@@ -16,7 +16,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--color-sanaclub-bg)]">
         <div className="rounded-xl border border-[var(--color-sanaclub-border)] bg-white px-5 py-3 text-sm">
-          Validando sesiÃ³n...
+          Validando sesión...
         </div>
       </div>
     );

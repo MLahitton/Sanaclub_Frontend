@@ -19,6 +19,12 @@ const DashboardPlaceholderPage = lazy(() =>
   })),
 );
 // eslint-disable-next-line react-refresh/only-export-components
+const CreateEvolutionSheetPage = lazy(() =>
+  import("../features/evolution-sheets/pages/CreateEvolutionSheetPage").then((module) => ({
+    default: module.CreateEvolutionSheetPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
 const LoginPage = lazy(() =>
   import("../features/auth/pages/LoginPage").then((module) => ({
     default: module.LoginPage,
@@ -34,6 +40,36 @@ const LandingPlaceholderPage = lazy(() =>
 const ModulePlaceholderPage = lazy(() =>
   import("../pages/ModulePlaceholderPage").then((module) => ({
     default: module.ModulePlaceholderPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const AppointmentsPage = lazy(() =>
+  import("../features/appointments/pages/AppointmentsPage").then((module) => ({
+    default: module.AppointmentsPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const AppointmentsCalendarPage = lazy(() =>
+  import("../features/appointments/pages/AppointmentsCalendarPage").then((module) => ({
+    default: module.AppointmentsCalendarPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const CreateAppointmentPage = lazy(() =>
+  import("../features/appointments/pages/CreateAppointmentPage").then((module) => ({
+    default: module.CreateAppointmentPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const AppointmentDetailPage = lazy(() =>
+  import("../features/appointments/pages/AppointmentDetailPage").then((module) => ({
+    default: module.AppointmentDetailPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const EditAppointmentPage = lazy(() =>
+  import("../features/appointments/pages/EditAppointmentPage").then((module) => ({
+    default: module.EditAppointmentPage,
   })),
 );
 // eslint-disable-next-line react-refresh/only-export-components
@@ -61,10 +97,32 @@ const CreateTreatmentSheetPage = lazy(() =>
   })),
 );
 // eslint-disable-next-line react-refresh/only-export-components
+const EvolutionSheetDetailPage = lazy(() =>
+  import("../features/evolution-sheets/pages/EvolutionSheetDetailPage").then((module) => ({
+    default: module.EvolutionSheetDetailPage,
+  })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const CompleteEvolutionSheetNewIndicationsPage = lazy(() =>
+  import("../features/evolution-sheets/pages/CompleteEvolutionSheetNewIndicationsPage").then(
+    (module) => ({
+      default: module.CompleteEvolutionSheetNewIndicationsPage,
+    }),
+  ),
+);
+// eslint-disable-next-line react-refresh/only-export-components
 const TreatmentSheetDetailPage = lazy(() =>
   import("../features/treatment-sheets/pages/TreatmentSheetDetailPage").then((module) => ({
     default: module.TreatmentSheetDetailPage,
   })),
+);
+// eslint-disable-next-line react-refresh/only-export-components
+const UpdateTreatmentSheetMedicalIndicationPage = lazy(() =>
+  import("../features/treatment-sheets/pages/UpdateTreatmentSheetMedicalIndicationPage").then(
+    (module) => ({
+      default: module.UpdateTreatmentSheetMedicalIndicationPage,
+    }),
+  ),
 );
 // eslint-disable-next-line react-refresh/only-export-components
 const EditPatientPage = lazy(() =>
@@ -152,10 +210,45 @@ export const appRoutes: RouteObject[] = [
         ),
       },
       {
+        path: "patients/:patientId/evolution-sheets/new",
+        element: (
+          <PermissionGuard
+            permissions={["patients.read", "evolutions.create", "treatments.read"]}
+            mode="all"
+          >
+            <CreateEvolutionSheetPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "evolution-sheets/:evolutionSheetId",
+        element: (
+          <PermissionGuard permissions={["evolutions.read"]}>
+            <EvolutionSheetDetailPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "evolution-sheets/:evolutionSheetId/new-indications",
+        element: (
+          <PermissionGuard permissions={["evolutions.update_draft"]}>
+            <CompleteEvolutionSheetNewIndicationsPage />
+          </PermissionGuard>
+        ),
+      },
+      {
         path: "treatment-sheets/:treatmentSheetId",
         element: (
           <PermissionGuard permissions={["treatments.read"]}>
             <TreatmentSheetDetailPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "treatment-sheets/:treatmentSheetId/medical-indication",
+        element: (
+          <PermissionGuard permissions={["treatments.update_medical_indication"]}>
+            <UpdateTreatmentSheetMedicalIndicationPage />
           </PermissionGuard>
         ),
       },
@@ -171,12 +264,39 @@ export const appRoutes: RouteObject[] = [
         path: "appointments",
         element: (
           <PermissionGuard permissions={["appointments.read"]}>
-            <ModulePlaceholderPage
-              title="Agenda"
-              moduleName="Agenda"
-              description="Módulo placeholder para agenda. No hay calendario real en esta fase."
-              requiredPermissions={["appointments.read"]}
-            />
+            <AppointmentsPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "appointments/new",
+        element: (
+          <PermissionGuard permissions={["appointments.create", "patients.read"]} mode="all">
+            <CreateAppointmentPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "appointments/calendar",
+        element: (
+          <PermissionGuard permissions={["appointments.read"]}>
+            <AppointmentsCalendarPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "appointments/:appointmentId/edit",
+        element: (
+          <PermissionGuard permissions={["appointments.read", "appointments.update"]} mode="all">
+            <EditAppointmentPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "appointments/:appointmentId",
+        element: (
+          <PermissionGuard permissions={["appointments.read"]}>
+            <AppointmentDetailPage />
           </PermissionGuard>
         ),
       },

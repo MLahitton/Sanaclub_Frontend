@@ -7,8 +7,6 @@ export type TreatmentSheetResponse = {
   epsTreatingDoctorDiagnosis?: string | null;
   referredClinicalHistory?: string | null;
   indicationDate?: string | null;
-  entryTime?: string | null;
-  exitTime?: string | null;
   assignedStaffName?: string | null;
   therapyName?: string | null;
   nervousSystemIndications?: string | null;
@@ -38,4 +36,23 @@ export type CreateTreatmentSheetRequest = {
   consultationDate?: string | null;
   epsTreatingDoctorDiagnosis?: string | null;
   referredClinicalHistory?: string | null;
+};
+
+export type UpdateTreatmentSheetMedicalIndicationRequest = {
+  indicationDate?: string | null;
+  assignedStaffName?: string | null;
+  therapyName?: string | null;
+  nervousSystemIndications?: string | null;
+  decompressSpine: boolean;
+  decompressNeck: boolean;
+  decompressBack: boolean;
+  endocrineNerves: boolean;
+  endocrineDefenses: boolean;
+  endocrineHormones: boolean;
+  cardiovascularReflexologyWith?: string | null;
+  digestiveColonReflexologyWith?: string | null;
+  respiratoryReflexologyWith?: string | null;
+  urinaryReflexologyWithAcidFruits?: string | null;
+  otherIndications?: string | null;
+  observations?: string | null;
 };

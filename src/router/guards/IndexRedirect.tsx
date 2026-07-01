@@ -10,7 +10,7 @@ export function IndexRedirect() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--color-sanaclub-bg)]">
         <div className="rounded-xl border border-[var(--color-sanaclub-border)] bg-white px-5 py-3 text-sm">
-          Verificando sesiÃ³n...
+          Verificando sesión...
         </div>
       </div>
     );

@@ -1,0 +1,241 @@
+import { AxiosError } from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { AccessDeniedState } from "../../../shared/components/AccessDeniedState";
+import { LoadingState } from "../../../shared/components/LoadingState";
+import { PageHeader } from "../../../shared/components/PageHeader";
+import type { ApiErrorResponse } from "../../../shared/types/api.types";
+import { usePermissions } from "../../auth/hooks/usePermissions";
+import { formatPatientFullName } from "../../patients/utils/patientFormatters";
+import { usePatient } from "../../patients/hooks/usePatient";
+import { usePatientTreatmentSheets } from "../../treatment-sheets/hooks/usePatientTreatmentSheets";
+import { isTreatmentApproved } from "../../treatment-sheets/utils/treatmentSheetFormatters";
+import { EvolutionSheetInitialForm } from "../components/EvolutionSheetInitialForm";
+import { useCreateEvolutionSheet } from "../hooks/useCreateEvolutionSheet";
+import { toCreateEvolutionSheetRequest, type CreateEvolutionSheetFormValues } from "../schemas/evolutionSheet.schemas";
+
+function getPatientErrorMessage(error: unknown): string {
+  if (error instanceof AxiosError) {
+    if (error.response?.status === 404) {
+      return "Paciente no encontrado.";
+    }
+
+    if (error.response?.status === 403) {
+      return "No tienes permisos para acceder al detalle de este paciente.";
+    }
+
+    const response = error.response?.data as ApiErrorResponse | undefined;
+    if (response?.message) {
+      return response.message;
+    }
+  }
+
+  return "No fue posible cargar la información del paciente.";
+}
+
+function getTreatmentSheetsErrorMessage(error: unknown): string {
+  if (error instanceof AxiosError) {
+    if (error.response?.status === 403) {
+      return "No tienes permisos para consultar las hojas de tratamiento.";
+    }
+
+    const response = error.response?.data as ApiErrorResponse | undefined;
+    if (response?.message) {
+      return response.message;
+    }
+  }
+
+  return "No fue posible cargar las hojas de tratamiento del paciente.";
+}
+
+export function CreateEvolutionSheetPage() {
+  const navigate = useNavigate();
+  const { patientId } = useParams<{ patientId: string }>();
+  const { can } = usePermissions();
+  const normalizedPatientId = patientId?.trim();
+  const canCreate = can("evolutions.create");
+  const canReadTreatments = can("treatments.read");
+
+  const patientQuery = usePatient(normalizedPatientId);
+  const treatmentSheetsQuery = usePatientTreatmentSheets(normalizedPatientId, canReadTreatments);
+  const createEvolutionSheetMutation = useCreateEvolutionSheet(normalizedPatientId);
+
+  const approvedTreatmentSheets = (treatmentSheetsQuery.data ?? []).filter(isTreatmentApproved);
+
+  const handleSubmit = async (values: CreateEvolutionSheetFormValues) => {
+    const request = toCreateEvolutionSheetRequest(values);
+
+    if (!normalizedPatientId) {
+      toast.error("No se identificó el paciente para crear la hoja de evolución.");
+      return;
+    }
+
+    await createEvolutionSheetMutation.mutateAsync(request);
+    navigate(`/app/patients/${normalizedPatientId}`, { replace: true });
+  };
+
+  const handleCancel = () => {
+    if (!normalizedPatientId) {
+      navigate("/app/patients", { replace: true });
+      return;
+    }
+
+    navigate(`/app/patients/${normalizedPatientId}`, { replace: true });
+  };
+
+  if (!canCreate || !canReadTreatments) {
+    return (
+      <AccessDeniedState
+        message="No tienes permisos para crear hojas de evolución."
+        requiredPermissions={["evolutions.create", "treatments.read", "patients.read"]}
+      />
+    );
+  }
+
+  if (!normalizedPatientId) {
+    return (
+      <section className="space-y-4">
+        <PageHeader
+          title="Crear hoja de evolución"
+          description="No fue posible identificar al paciente en la URL."
+          breadcrumbs={[
+            { label: "Inicio", path: "/app" },
+            { label: "Pacientes", path: "/app/patients" },
+            { label: "Nueva hoja de evolución" },
+          ]}
+        />
+
+        <article className="rounded-2xl border border-[var(--color-sanaclub-coral)]/30 bg-white p-6 text-center shadow-[0_12px_35px_rgba(36,51,43,0.08)]">
+          <h2 className="text-lg font-semibold text-[var(--color-sanaclub-text)]">
+            Falta el identificador del paciente
+          </h2>
+          <p className="mt-2 text-sm text-[var(--color-sanaclub-muted)]">
+            Revisa la ruta y vuelve al listado para iniciar de nuevo.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate("/app/patients", { replace: true })}
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-sanaclub-green)] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--color-sanaclub-green-dark)]"
+          >
+            Volver al listado
+          </button>
+        </article>
+      </section>
+    );
+  }
+
+  if (patientQuery.isLoading || treatmentSheetsQuery.isLoading) {
+    return <LoadingState message="Cargando datos base..." />;
+  }
+
+  if (patientQuery.isError || treatmentSheetsQuery.isError) {
+    return (
+      <section className="space-y-4">
+        <PageHeader
+          title="Crear hoja de evolución"
+          description="No fue posible cargar los datos."
+          breadcrumbs={[
+            { label: "Inicio", path: "/app" },
+            { label: "Pacientes", path: "/app/patients" },
+            { label: "Nueva hoja de evolución" },
+          ]}
+        />
+
+        <article className="rounded-2xl border border-[var(--color-sanaclub-coral)]/30 bg-white p-6 text-center shadow-[0_12px_35px_rgba(36,51,43,0.08)]">
+          <h2 className="text-lg font-semibold text-[var(--color-sanaclub-text)]">
+            No fue posible cargar la información
+          </h2>
+          <p className="mt-2 text-sm text-[var(--color-sanaclub-muted)]">
+            {patientQuery.isError
+              ? getPatientErrorMessage(patientQuery.error)
+              : getTreatmentSheetsErrorMessage(treatmentSheetsQuery.error)}
+          </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (patientQuery.isError) {
+                  void patientQuery.refetch();
+                }
+                if (treatmentSheetsQuery.isError) {
+                  void treatmentSheetsQuery.refetch();
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sanaclub-coral)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--color-sanaclub-coral-dark)]"
+            >
+              Reintentar
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/app/patients/${normalizedPatientId}`, { replace: true })}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-sanaclub-border)] px-5 py-2.5 text-sm font-semibold text-[var(--color-sanaclub-text)] transition hover:border-[var(--color-sanaclub-green)] hover:text-[var(--color-sanaclub-green)]"
+            >
+              Volver al detalle
+            </button>
+          </div>
+        </article>
+      </section>
+    );
+  }
+
+  if (!patientQuery.data) {
+    return null;
+  }
+
+  if (approvedTreatmentSheets.length === 0) {
+    return (
+      <section className="space-y-4">
+        <PageHeader
+          title="Crear hoja de evolución"
+          description={formatPatientFullName(patientQuery.data)}
+          breadcrumbs={[
+            { label: "Inicio", path: "/app" },
+            { label: "Pacientes", path: "/app/patients" },
+            { label: "Nueva hoja de evolución" },
+          ]}
+        />
+
+        <article className="rounded-2xl border border-[var(--color-sanaclub-coral)]/30 bg-white p-6 text-center shadow-[0_12px_35px_rgba(36,51,43,0.08)]">
+          <h2 className="text-lg font-semibold text-[var(--color-sanaclub-text)]">
+            Este paciente no tiene hojas de tratamiento aprobadas.
+          </h2>
+          <p className="mt-2 text-sm text-[var(--color-sanaclub-muted)]">
+            Debe aprobar una hoja de tratamiento antes de crear una evolución.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate(`/app/patients/${normalizedPatientId}`, { replace: true })}
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-sanaclub-green)] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--color-sanaclub-green-dark)]"
+          >
+            Volver al detalle del paciente
+          </button>
+        </article>
+      </section>
+    );
+  }
+
+  return (
+    <section className="space-y-4">
+      <PageHeader
+        title="Crear hoja de evolución"
+        description={`${formatPatientFullName(patientQuery.data)}. Registra una nueva hoja de evolución para seguimiento clínico.`}
+        breadcrumbs={[
+          { label: "Inicio", path: "/app" },
+          { label: "Pacientes", path: "/app/patients" },
+          { label: "Nueva hoja de evolución" },
+        ]}
+      />
+
+      <div className="rounded-3xl border border-[var(--color-sanaclub-border)] bg-white p-4 shadow-[0_16px_48px_rgba(36,51,43,0.08)] md:p-6">
+        <EvolutionSheetInitialForm
+          approvedTreatmentSheets={approvedTreatmentSheets}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isSubmitting={createEvolutionSheetMutation.isPending}
+          submitLabel="Crear hoja de evolución"
+        />
+      </div>
+    </section>
+  );
+}
+

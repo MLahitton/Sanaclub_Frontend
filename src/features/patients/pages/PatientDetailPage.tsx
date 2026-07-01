@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LoadingState } from "../../../shared/components/LoadingState";
 import { ArchivePatientConfirmDialog } from "../components/ArchivePatientConfirmDialog";
 import { PatientTreatmentSheetsSection } from "../../treatment-sheets/components/PatientTreatmentSheetsSection";
+import { PatientEvolutionSheetsSection } from "../../evolution-sheets/components/PatientEvolutionSheetsSection";
 import { PatientClinicalTabsPlaceholder } from "../components/PatientClinicalTabsPlaceholder";
 import { PatientDetailHeader } from "../components/PatientDetailHeader";
 import { PatientInfoCard } from "../components/PatientInfoCard";
@@ -326,6 +327,7 @@ export function PatientDetailPage() {
       </div>
 
       <PatientTreatmentSheetsSection patientId={patient.id} />
+      <PatientEvolutionSheetsSection patientId={patient.id} />
 
       <PatientClinicalTabsPlaceholder />
 

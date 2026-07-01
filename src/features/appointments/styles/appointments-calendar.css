@@ -1,0 +1,126 @@
+.sanaclub-calendar-shell {
+  --fc-border-color: var(--color-sanaclub-border);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: #fafaf7;
+  --fc-list-event-hover-bg-color: rgba(63, 127, 89, 0.08);
+  --fc-today-bg-color: rgba(223, 168, 137, 0.15);
+  --fc-now-indicator-color: var(--color-sanaclub-coral);
+  color: var(--color-sanaclub-text);
+}
+
+.sanaclub-calendar-shell .fc {
+  font-family: inherit;
+}
+
+.sanaclub-calendar-shell .fc .fc-toolbar {
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sanaclub-calendar-shell .fc .fc-toolbar-title {
+  color: var(--color-sanaclub-text);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.sanaclub-calendar-shell .fc .fc-button {
+  border: 1px solid var(--color-sanaclub-border);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--color-sanaclub-text);
+  box-shadow: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.sanaclub-calendar-shell .fc .fc-button:hover,
+.sanaclub-calendar-shell .fc .fc-button:focus {
+  border-color: rgba(63, 127, 89, 0.35);
+  background: rgba(63, 127, 89, 0.08);
+  color: var(--color-sanaclub-green-dark);
+}
+
+.sanaclub-calendar-shell .fc .fc-button-primary:not(:disabled).fc-button-active {
+  border-color: var(--color-sanaclub-green);
+  background: var(--color-sanaclub-green);
+  color: #ffffff;
+}
+
+.sanaclub-calendar-shell .fc .fc-col-header-cell-cushion,
+.sanaclub-calendar-shell .fc .fc-daygrid-day-number,
+.sanaclub-calendar-shell .fc .fc-timegrid-slot-label-cushion {
+  color: var(--color-sanaclub-muted);
+  text-decoration: none;
+}
+
+.sanaclub-calendar-shell .fc .fc-scrollgrid,
+.sanaclub-calendar-shell .fc .fc-theme-standard td,
+.sanaclub-calendar-shell .fc .fc-theme-standard th {
+  border-color: var(--color-sanaclub-border);
+}
+
+.sanaclub-calendar-shell .fc .fc-event {
+  border: 0;
+  border-radius: 0.75rem;
+  padding: 0.12rem 0.2rem;
+  color: var(--color-sanaclub-text);
+  box-shadow: 0 10px 24px rgba(36, 51, 43, 0.14);
+}
+
+.sanaclub-calendar-shell .fc .fc-event:hover {
+  filter: saturate(110%);
+  box-shadow: 0 12px 26px rgba(36, 51, 43, 0.16);
+}
+
+.sanaclub-calendar-shell .fc .fc-event-title,
+.sanaclub-calendar-shell .fc .fc-event-time,
+.sanaclub-calendar-shell .fc .fc-event-title-container {
+  color: var(--color-sanaclub-text);
+  font-weight: 700;
+}
+
+.sanaclub-calendar-event--scheduled {
+  background: rgba(223, 168, 137, 0.52);
+  border-left: 4px solid #d7a780;
+}
+
+.sanaclub-calendar-event--scheduled .fc-event-title,
+.sanaclub-calendar-event--scheduled .fc-event-time {
+  color: #3b483f;
+}
+
+.sanaclub-calendar-event--confirmed {
+  background: rgba(63, 127, 89, 0.34);
+  border-left: 4px solid var(--color-sanaclub-green-dark);
+}
+
+.sanaclub-calendar-event--confirmed .fc-event-title,
+.sanaclub-calendar-event--confirmed .fc-event-time {
+  color: #f4fff7;
+}
+
+.sanaclub-calendar-event--cancelled {
+  background: rgba(255, 107, 111, 0.32);
+  border-left: 4px solid #de5b61;
+  text-decoration: line-through;
+}
+
+.sanaclub-calendar-event--cancelled .fc-event-title,
+.sanaclub-calendar-event--cancelled .fc-event-time,
+.sanaclub-calendar-event--cancelled .fc-event-title-container {
+  color: #4a3b39;
+}
+
+@media (max-width: 768px) {
+  .sanaclub-calendar-shell .fc .fc-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sanaclub-calendar-shell .fc .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+  }
+}

@@ -1,10 +1,5 @@
 import type { TreatmentSheetResponse } from "../types/treatmentSheet.types";
-import {
-  formatOptionalTreatmentText,
-  formatTreatmentDate,
-  formatTreatmentTime,
-  isTreatmentDraft,
-} from "../utils/treatmentSheetFormatters";
+import { formatOptionalTreatmentText, formatTreatmentDate, isTreatmentDraft } from "../utils/treatmentSheetFormatters";
 
 type TreatmentSheetMedicalIndicationCardProps = {
   treatmentSheet: TreatmentSheetResponse;
@@ -13,8 +8,6 @@ type TreatmentSheetMedicalIndicationCardProps = {
 function hasMedicalData(sheet: TreatmentSheetResponse): boolean {
   const values: Array<string | undefined | null> = [
     sheet.indicationDate,
-    sheet.entryTime,
-    sheet.exitTime,
     sheet.assignedStaffName,
     sheet.therapyName,
     sheet.nervousSystemIndications,
@@ -57,14 +50,6 @@ export function TreatmentSheetMedicalIndicationCard({
         <div>
           <p className="font-semibold text-[var(--color-sanaclub-text)]">Fecha de indicación</p>
           <p>{formatTreatmentDate(treatmentSheet.indicationDate)}</p>
-        </div>
-        <div>
-          <p className="font-semibold text-[var(--color-sanaclub-text)]">Hora de entrada</p>
-          <p>{formatTreatmentTime(treatmentSheet.entryTime)}</p>
-        </div>
-        <div>
-          <p className="font-semibold text-[var(--color-sanaclub-text)]">Hora de salida</p>
-          <p>{formatTreatmentTime(treatmentSheet.exitTime)}</p>
         </div>
         <div>
           <p className="font-semibold text-[var(--color-sanaclub-text)]">Personal asignado</p>

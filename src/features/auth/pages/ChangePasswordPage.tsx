@@ -15,12 +15,12 @@ export function ChangePasswordPage() {
     setIsSubmitting(true);
     try {
       const currentUser = await changePasswordWithRefresh(values);
-      toast.success("ContraseÃ±a actualizada.");
+      toast.success("Contraseña actualizada.");
       if (!currentUser.mustChangePassword) {
         navigate("/app", { replace: true });
       }
     } catch {
-      toast.error("No fue posible cambiar la contraseÃ±a.");
+      toast.error("No fue posible cambiar la contraseña.");
     } finally {
       setIsSubmitting(false);
     }
@@ -32,7 +32,7 @@ export function ChangePasswordPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sanaclub-green)]">
           Primer acceso requerido
         </p>
-        <h1 className="text-2xl font-bold">Cambiar contraseÃ±a</h1>
+        <h1 className="text-2xl font-bold">Cambiar contraseña</h1>
         <p className="text-sm text-[var(--color-sanaclub-muted)]">
           Usuario: {user?.fullName ?? user?.email ?? "interno autenticado"}
         </p>
@@ -40,7 +40,7 @@ export function ChangePasswordPage() {
         <ChangePasswordForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
 
         <p className="text-xs text-[var(--color-sanaclub-muted)]">
-          Debe definir una nueva contraseÃ±a que no hayas usado recientemente.
+          Debe definir una nueva contraseña que no hayas usado recientemente.
         </p>
       </div>
     </ProtectedPlaceholderLayout>

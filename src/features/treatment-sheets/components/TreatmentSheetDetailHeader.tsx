@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { CheckCircle2, AlertCircle, ArrowLeft, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { usePermissions } from "../../auth/hooks/usePermissions";
@@ -19,16 +20,19 @@ export function TreatmentSheetDetailHeader({
   onBackToPatient,
 }: TreatmentSheetDetailHeaderProps) {
   const { can } = usePermissions();
+  const navigate = useNavigate();
   const approved = isTreatmentApproved(treatmentSheet);
   const canCompleteMedicalIndication = can("treatments.update_medical_indication");
   const canGeneratePdf = can("documents.generate");
+  const canCompleteAction =
+    canCompleteMedicalIndication && treatmentSheet.isActive && !approved;
 
   const handleCompleteIndication = () => {
-    toast.info("La indicación médica se implementará en la siguiente fase.");
+    navigate(`/app/treatment-sheets/${treatmentSheet.id}/medical-indication`);
   };
 
   const handleGeneratePdf = () => {
-    toast.info("La generación de PDF se implementará en una próxima fase.");
+    toast.info("La generacion de PDF se implementara en una proxima fase.");
   };
 
   return (
@@ -42,7 +46,7 @@ export function TreatmentSheetDetailHeader({
             {formatTreatmentNumber(treatmentSheet.treatmentNumber)}
           </h2>
           <p className="text-sm text-[var(--color-sanaclub-muted)]">
-            Consulta la informaciÃ³n inicial y la indicaciÃ³n mÃ©dica asociada.
+            Consulta la informacion inicial y la indicacion medica asociada.
           </p>
         </div>
 
@@ -64,7 +68,7 @@ export function TreatmentSheetDetailHeader({
 
       <div className="grid gap-2 rounded-xl bg-[var(--color-sanaclub-bg)] p-3 text-sm text-[var(--color-sanaclub-text)] md:grid-cols-2">
         <p>
-          <span className="font-semibold">Número de tratamiento:</span>{" "}
+          <span className="font-semibold">Numero de tratamiento:</span>{" "}
           {formatTreatmentNumber(treatmentSheet.treatmentNumber)}
         </p>
         <p>
@@ -87,14 +91,14 @@ export function TreatmentSheetDetailHeader({
           Volver al paciente
         </button>
 
-        {!approved && canCompleteMedicalIndication ? (
+        {canCompleteAction ? (
           <button
             type="button"
             onClick={handleCompleteIndication}
             className="inline-flex items-center gap-2 rounded-full border border-[var(--color-sanaclub-coral)] bg-white px-5 py-2.5 text-sm font-semibold text-[var(--color-sanaclub-coral-dark)] transition hover:bg-[var(--color-sanaclub-coral)] hover:text-white"
           >
             <FileText className="h-4 w-4" />
-            Completar indicaciÃ³n mÃ©dica
+            Completar indicacion medica
           </button>
         ) : null}
 

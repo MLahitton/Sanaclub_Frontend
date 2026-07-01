@@ -1,6 +1,7 @@
 import { apiClient } from "../../../shared/api/apiClient";
 import type {
   CreateTreatmentSheetRequest,
+  UpdateTreatmentSheetMedicalIndicationRequest,
   TreatmentSheetResponse,
 } from "../types/treatmentSheet.types";
 
@@ -63,6 +64,24 @@ export async function getTreatmentSheetById(
 
   const response = await apiClient.get<TreatmentSheetResponse>(
     `/api/v1/treatment-sheets/${encodeURIComponent(normalizedTreatmentSheetId)}`,
+  );
+
+  return response.data;
+}
+
+export async function updateTreatmentSheetMedicalIndication(
+  treatmentSheetId: string,
+  request: UpdateTreatmentSheetMedicalIndicationRequest,
+): Promise<TreatmentSheetResponse> {
+  const normalizedTreatmentSheetId = treatmentSheetId.trim();
+
+  if (!normalizedTreatmentSheetId) {
+    throw new Error("El identificador de la hoja de tratamiento es requerido.");
+  }
+
+  const response = await apiClient.put<TreatmentSheetResponse>(
+    `/api/v1/treatment-sheets/${encodeURIComponent(normalizedTreatmentSheetId)}/medical-indication`,
+    request,
   );
 
   return response.data;
