@@ -1,11 +1,10 @@
 import { ChevronRight, LogOut, Menu, X } from "lucide-react";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { APP_NAME } from "../shared/constants/app.constants";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { usePermissions } from "../features/auth/hooks/usePermissions";
 import { BrandLogo } from "../shared/components/BrandLogo";
-import { PageHeader } from "../shared/components/PageHeader";
 import { UserInitialsAvatar } from "../shared/components/UserInitialsAvatar";
 import { APP_INTERNAL_NAVIGATION } from "../shared/navigation/navigation.config";
 
@@ -31,7 +30,6 @@ function hasAccessToNavigationItem(
 export function AppLayout() {
   const { user, logout } = useAuth();
   const { canAny, canAll } = usePermissions();
-  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const userRoles = user?.roles ?? [];
@@ -45,24 +43,6 @@ export function AppLayout() {
     [canAny, canAll],
   );
 
-  const currentSection = useMemo(() => {
-    const exactSection = visibleNavigation.find((item) => item.path === location.pathname);
-
-    if (exactSection) return exactSection;
-
-    return (
-      visibleNavigation.find(
-        (item) =>
-          item.path !== "/app" &&
-          item.path.length > 1 &&
-          location.pathname.startsWith(`${item.path}/`),
-      ) ?? visibleNavigation[0]
-    );
-  }, [location.pathname, visibleNavigation]);
-
-  const sectionLabel = currentSection?.label ?? "Dashboard";
-  const sectionDescription =
-    currentSection?.description ?? "Bienvenido al panel interno de Sanaclub.";
   const navigationItems: LayoutNavItem[] = visibleNavigation.map((item) => {
     const Icon = item.icon;
     return {
@@ -180,31 +160,17 @@ export function AppLayout() {
         </aside>
 
         <section className="min-h-screen flex-1">
-          <header className="sticky top-0 z-30 border-b border-[var(--color-sanaclub-border)] bg-white/95 backdrop-blur">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-              <button
-                type="button"
-                className="rounded-full border border-[var(--color-sanaclub-border)] p-2 md:hidden"
-                onClick={() => setMobileMenuOpen((open) => !open)}
-                aria-label="Abrir menú"
-              >
-                <Menu className="h-4 w-4" />
-              </button>
-
-              <div className="flex-1">
-                <PageHeader
-                  title={sectionLabel}
-                  description={sectionDescription}
-                  breadcrumbs={[
-                    { label: "Inicio", path: "/app" },
-                    { label: sectionLabel },
-                  ]}
-                />
-              </div>
-            </div>
-          </header>
-
-          <main className="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6">
+          {!mobileMenuOpen ? (
+            <button
+              type="button"
+              className="fixed left-4 top-4 z-30 inline-flex rounded-full border border-[var(--color-sanaclub-border)] bg-white/95 p-2 shadow-[0_12px_24px_rgba(36,51,43,0.12)] md:hidden"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Abrir menÃº"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+          ) : null}
+          <main className="mx-auto max-w-6xl px-4 pb-10 pt-8 sm:px-6">
             <Outlet />
           </main>
         </section>
@@ -212,3 +178,4 @@ export function AppLayout() {
     </div>
   );
 }
+
